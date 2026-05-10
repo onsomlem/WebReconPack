@@ -1,0 +1,19 @@
+# Recon bundles produced during testing — keep golden artifacts under
+# golden-tests/ which is explicitly tracked.
+recon-*.zip
+!golden-tests/**/recon-*.zip
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Node tooling (none used today, but if added later)
+node_modules/
+
+# Local Chrome profile fixtures
+*.crx
+*.pem

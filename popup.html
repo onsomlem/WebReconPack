@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>WebReconPack</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main id="app">
+      <header>
+        <h1>WebReconPack</h1>
+        <span class="version" id="version">v0.1.2</span>
+      </header>
+
+      <section id="firstRunWarning" class="warning hidden">
+        <p>
+          Recon packs may contain sensitive page data, visible cookies, storage
+          values, request bodies, response bodies, and account-specific runtime
+          state.
+        </p>
+        <p>
+          Use only on sites, accounts, and applications you own, administer, or
+          are authorized to inspect.
+        </p>
+        <p>Keep downloaded ZIPs private unless you review and redact them first.</p>
+        <button id="ackBtn" type="button">I understand</button>
+      </section>
+
+      <section id="stateBlock">
+        <div class="row">
+          <span class="label">State</span>
+          <span class="value" id="state">loading…</span>
+        </div>
+        <div class="row">
+          <span class="label">Tab</span>
+          <span class="value" id="tab">—</span>
+        </div>
+        <div class="row">
+          <span class="label">Session</span>
+          <span class="value mono" id="sessionId">—</span>
+        </div>
+      </section>
+
+      <section id="conflict" class="warning hidden">
+        <p>
+          A recon session is already recording in another tab
+          (tab <span id="conflictTabId">?</span>).
+        </p>
+        <div class="btnRow">
+          <button id="conflictStop" type="button">Stop &amp; download</button>
+          <button id="conflictCancel" type="button">Cancel session</button>
+        </div>
+      </section>
+
+      <section id="counts" class="hidden">
+        <h2>Live counters</h2>
+        <ul id="countList"></ul>
+        <div class="row capRow hidden" id="capRow">
+          <span class="label">Body cap</span>
+          <span class="value danger">reached</span>
+        </div>
+      </section>
+
+      <section id="ready" class="ok hidden">
+        <p><strong>Recon pack downloaded.</strong></p>
+        <p class="muted" id="readyFilename">—</p>
+        <button id="newSessionBtn" type="button">Start new session</button>
+      </section>
+
+      <section id="errorPanel" class="warning hidden">
+        <p><strong>Session error.</strong></p>
+        <p class="muted" id="errorMsg">—</p>
+        <button id="clearErrorBtn" type="button">Clear</button>
+      </section>
+
+      <section id="actions">
+        <button id="startBtn" type="button">Start Recon</button>
+        <button id="stopBtn" type="button" class="hidden">Stop &amp; Download</button>
+        <button id="cancelBtn" type="button" class="hidden">Cancel</button>
+      </section>
+
+      <footer>
+        <a href="#" id="settingsToggle">Settings</a>
+      </footer>
+
+      <section id="settingsPanel" class="hidden">
+        <label class="setting">
+          <input type="checkbox" id="setRedact" /> Redact secrets in headers/bodies/cookies
+        </label>
+        <label class="setting">
+          <input type="checkbox" id="setReqBodies" /> Capture request bodies
+        </label>
+        <label class="setting">
+          <input type="checkbox" id="setRespBodies" /> Capture response bodies
+        </label>
+        <label class="setting">
+          <input type="checkbox" id="setUserMeta" /> Capture user event metadata
+        </label>
+        <label class="setting">
+          <input type="checkbox" id="setInputValues" /> Capture input values (never password fields)
+        </label>
+        <label class="setting">
+          <input type="checkbox" id="setClipboardValues" /> Capture clipboard values
+        </label>
+        <label class="setting">
+          <input type="checkbox" id="setCacheUrls" /> Snapshot Cache Storage URLs
+        </label>
+      </section>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
