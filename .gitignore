@@ -17,3 +17,6 @@ node_modules/
 # Local Chrome profile fixtures
 *.crx
 *.pem
+
+# Local AI/agent settings
+.claude/
