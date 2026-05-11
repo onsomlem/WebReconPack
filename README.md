@@ -4,9 +4,6 @@ Local-first Chrome MV3 extension that records a user-controlled browsing
 session and exports a local ZIP containing enough runtime context to
 understand how a website behaves.
 
-See [`WebReconPack_LOCKED_SPEC_v0.1.2.md`](./WebReconPack_LOCKED_SPEC_v0.1.2.md)
-for the full v0.1 spec.
-
 > **Local-only.** Recon packs never leave your machine. The extension uses
 > `chrome.downloads.download()` to save the ZIP locally and has no network
 > egress of its own.
@@ -306,9 +303,14 @@ WebReconPack/
 ├── popup.html / popup.css / popup.js   # toolbar UI
 ├── lib/jszip.min.js                    # JSZip 3.10.1, vendored
 ├── assets/icon-{16,48,128}.png         # toolbar icons
-├── README.md
-├── SPEC.md                             # earlier spec draft
-└── WebReconPack_LOCKED_SPEC_v0.1.2.md  # locked v0.1 spec (source of truth)
+├── analyzer/                           # webrecon-analyze companion CLI (v0.2.0+)
+│   ├── webrecon_analyze.py             # single-file Python, stdlib only
+│   ├── README.md
+│   └── tests/test_acceptance.py        # 19 checks against the golden bundles
+├── golden-tests/                       # locked regression artifacts
+│   ├── sheets-125s-v0.1.0/
+│   └── github-repo-120s-v0.1.2/
+└── README.md
 ```
 
 ## Manual smoke test
