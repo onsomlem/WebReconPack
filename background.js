@@ -6,7 +6,7 @@
 importScripts("lib/jszip.min.js");
 
 const SCHEMA_VERSION = "0.1";
-const TOOL_VERSION = "0.1.1";
+const TOOL_VERSION = "0.1.2";
 
 // ---- Default settings (spec §10) -----------------------------------------
 const DEFAULT_SETTINGS = {

@@ -11,15 +11,15 @@ for the full v0.1 spec.
 > `chrome.downloads.download()` to save the ZIP locally and has no network
 > egress of its own.
 
-## Status — v0.1.1 (shipped)
+## Status — v0.1.2 (shipped, public-safe)
 
-v0.1.0 shipped after passing the spec §31 Sheets acceptance test (see
-**Validation** below). v0.1.1 adds operator-experience polish:
-
-- **Toolbar `REC` badge** so you can't forget a session is running.
-- **Live duration timer** in the popup.
-- **Capture-preset selector** — Light / Standard / Deep, per spec §10.
-- README **Validation** + **Reading the bundle** sections.
+- **v0.1.0** — first working release; passed spec §31 Sheets acceptance.
+- **v0.1.1** — operator polish: toolbar `REC` badge, live duration timer,
+  capture-preset selector (Light / Standard / Deep), README validation
+  section.
+- **v0.1.2** — public hygiene: untrack local agent settings; second
+  golden test (GitHub, 120s, form_submit + multi-frame validated); manifest
+  version bumped to match git tag.
 
 All v0.1 phases shipped:
 
@@ -44,11 +44,13 @@ worker internal traffic, Postman/OpenAPI export, recipe generation, full CSP via
 
 ## Validation
 
-WebReconPack v0.1.0 was tested on Google Sheets for a 125-second session.
-Bundle preserved under
-[`golden-tests/sheets-125s-v0.1.0/`](golden-tests/sheets-125s-v0.1.0/).
+Two production-grade web apps validated end-to-end. Bundles preserved under
+[`golden-tests/`](golden-tests/) and locked as the regression benchmark for
+future versions.
 
-Results:
+### Google Sheets
+
+125-second session. [`golden-tests/sheets-125s-v0.1.0/`](golden-tests/sheets-125s-v0.1.0/)
 
 - **768 KB ZIP** (130× under the spec's 100 MB acceptance cap)
 - **353 network records** (18 fetch + 335 XHR — first XHR-volume validation)
@@ -65,8 +67,29 @@ Results:
 - **No page breakage observed** (Sheets remained fully interactive,
   another extension running on the same page was not interfered with)
 
-That's the canonical complex-SPA acceptance test from spec §31. The
-extension produced the artifact it was designed to produce.
+### GitHub (logged-in browsing session)
+
+119-second session across dashboard → repo → issues → notifications.
+[`golden-tests/github-repo-120s-v0.1.2/`](golden-tests/github-repo-120s-v0.1.2/)
+
+- **1.3 MB ZIP** (75× under the 100 MB cap)
+- **232 network records** (226 fetch + 6 XHR — fetch-dominant SPA)
+- **313 sendBeacon** calls (GitHub's telemetry stream)
+- **1 form_submit captured** (first form-capture validation —
+  `dismiss-notice`, `authenticity_token` correctly redacted to type only)
+- **6 Worker constructions** captured
+- **1857 dynamic script/resource additions** (Turbo lazy-loading)
+- **79 navigation events** (heavy SPA route traffic)
+- **933 body fields redacted** by the standard regex
+- Endpoint clusters correctly normalized: `/{owner}/{repo}/issues`,
+  `/notifications/{id}/watch_subscription`, etc.
+- Pattern detector reported honestly — GitHub doesn't use GraphQL/WIZ/XSSI
+  in this session, so the report says so (no false positives)
+- **No page breakage observed**
+
+Combined coverage: XHR-heavy SPAs, fetch-heavy SPAs, form submits, multi-frame
+sessions, cross-origin frames, Trusted Types environments, and high-volume
+dynamic script injection — all without breaking the host page.
 
 ## Reading the bundle
 

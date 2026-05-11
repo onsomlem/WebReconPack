@@ -1,0 +1,82 @@
+{
+  "format_version": "0.1",
+  "tool": "WebReconPack",
+  "tool_version": "0.1.2",
+  "session_id": "e46fbdbc-cd70-4e26-a82c-88db0e10805d",
+  "started_at": "2026-05-11T00:05:27.621Z",
+  "ended_at": "2026-05-11T00:07:27.057Z",
+  "duration_ms": 119436,
+  "start_url": "https://github.com/",
+  "end_url": "https://github.com/Goochbeater/Spiritual-Spell-Red-Teaming/issues/53",
+  "settings": {
+    "capture_preset": "standard",
+    "redact_secrets": true,
+    "capture_request_bodies": true,
+    "capture_response_bodies": true,
+    "capture_binary_bodies": false,
+    "capture_idb_records": false,
+    "capture_user_event_metadata": true,
+    "capture_input_values": false,
+    "capture_clipboard_values": false,
+    "capture_file_contents": false,
+    "capture_cache_storage_urls": true,
+    "max_inline_body_bytes": 262144,
+    "max_sidecar_body_bytes": 5242880,
+    "max_total_body_bytes": 52428800,
+    "max_console_arg_bytes": 32768,
+    "max_storage_value_bytes": 102400,
+    "max_global_blob_bytes": 262144,
+    "dom_mutation_summary_interval_ms": 1000,
+    "stop_grace_period_ms": 500
+  },
+  "counts": {
+    "network": 232,
+    "fetch": 226,
+    "xhr": 6,
+    "beacon": 313,
+    "form": 1,
+    "navigation": 79,
+    "user_event": 149,
+    "script": 1857,
+    "download": 0,
+    "clipboard": 0,
+    "file_input": 0,
+    "worker": 6,
+    "ws_open": 0,
+    "ws_frame": 0,
+    "sse_open": 0,
+    "sse_event": 0,
+    "console": 1,
+    "error": 11,
+    "mutation_summary": 40,
+    "timeline": 2806
+  },
+  "limits": {
+    "max_inline_body_bytes": 262144,
+    "max_total_body_bytes": 52428800
+  },
+  "body_cap_hit": false,
+  "redaction": {
+    "headers": 17,
+    "cookies": 8,
+    "bodyFields": 933
+  },
+  "warnings": [],
+  "frames_seen": [
+    "https://github.com/",
+    "https://github.com/onsomlem/cocopilot",
+    "https://github.com/new",
+    "https://github.com/explore",
+    "https://www.youtube.com/embed/videoseries?list=PL0lo9MOBetEE0goMLEl97vO7slruNVj43",
+    "https://github.com/bytedance/UI-TARS-desktop",
+    "https://github.com/bytedance/UI-TARS-desktop/security",
+    "https://github.com/issues/assigned",
+    "https://github.com/repos",
+    "https://github.com/notifications",
+    "https://github.com/Goochbeater/Spiritual-Spell-Red-Teaming/issues/53?notification_referrer_id=NT_kwHOB_si89oAJlJlcG9zaXRvcnk7MTExNzEzODc3MDtJc3N1ZTs0MDc1NzI1OTQ1",
+    "https://github.com/Goochbeater/Spiritual-Spell-Red-Teaming/issues/53"
+  ],
+  "frames_snapshotted": [
+    "https://github.com/Goochbeater/Spiritual-Spell-Red-Teaming/issues/53"
+  ]
+}
