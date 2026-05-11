@@ -6,7 +6,7 @@
 importScripts("lib/jszip.min.js");
 
 const SCHEMA_VERSION = "0.1";
-const TOOL_VERSION = "0.1.2";
+const TOOL_VERSION = "0.1.1";
 
 // ---- Default settings (spec §10) -----------------------------------------
 const DEFAULT_SETTINGS = {
@@ -29,6 +29,44 @@ const DEFAULT_SETTINGS = {
   max_global_blob_bytes: 262144,
   dom_mutation_summary_interval_ms: 1000,
   stop_grace_period_ms: 500,
+};
+
+// ---- Capture presets (spec §10) -----------------------------------------
+// Each preset is a partial settings object — applied as an override on top
+// of the current settings. Switching preset preserves user toggles that
+// aren't part of that preset's domain.
+const CAPTURE_PRESETS = {
+  light: {
+    capture_preset: "light",
+    capture_request_bodies: false,
+    capture_response_bodies: false,
+    max_inline_body_bytes: 16384,
+    max_total_body_bytes: 5242880, // 5 MB
+    max_global_blob_bytes: 32768,
+    max_storage_value_bytes: 8192,
+    capture_idb_records: false,
+  },
+  standard: {
+    capture_preset: "standard",
+    capture_request_bodies: true,
+    capture_response_bodies: true,
+    max_inline_body_bytes: 262144,
+    max_total_body_bytes: 52428800, // 50 MB
+    max_global_blob_bytes: 262144,
+    max_storage_value_bytes: 102400,
+    capture_idb_records: false,
+  },
+  deep: {
+    capture_preset: "deep",
+    capture_request_bodies: true,
+    capture_response_bodies: true,
+    capture_binary_bodies: true,
+    capture_idb_records: true,
+    max_inline_body_bytes: 1048576, // 1 MB
+    max_total_body_bytes: 209715200, // 200 MB
+    max_global_blob_bytes: 1048576,
+    max_storage_value_bytes: 524288,
+  },
 };
 
 // ---- Redaction (spec §24) ------------------------------------------------
@@ -54,6 +92,21 @@ let activeWindowId = null;
 // Long-lived ports keyed by `${tabId}:${frameId}`. Each frame's isolated.js
 // holds one open while the page lives — this also keeps the SW alive.
 const ports = new Map();
+
+// ---- Toolbar badge -----------------------------------------------------
+// Set globally so the user sees "REC" no matter which tab they're on.
+function setRecordingBadge(recording) {
+  try {
+    if (recording) {
+      chrome.action.setBadgeText({ text: "REC" });
+      chrome.action.setBadgeBackgroundColor({ color: "#e6452f" });
+      chrome.action.setTitle({ title: "WebReconPack — recording" });
+    } else {
+      chrome.action.setBadgeText({ text: "" });
+      chrome.action.setTitle({ title: "WebReconPack" });
+    }
+  } catch (_) {}
+}
 
 // ---- Session shape -------------------------------------------------------
 
@@ -938,6 +991,7 @@ async function startSession(tabId) {
   } catch (_) {}
   session = newSession(tabId, url);
   await persistSessionMeta();
+  setRecordingBadge(true);
   broadcastCommand(
     {
       type: "start_session",
@@ -998,6 +1052,7 @@ async function stopSession() {
     session.warnings.push("ZIP assembly failed: " + (e && e.message));
     downloadResult = { ok: false, reason: String((e && e.message) || e) };
   }
+  setRecordingBadge(false);
   await persistSessionMeta();
   return { ok: session.state === "ready", ...downloadResult };
 }
@@ -1006,6 +1061,7 @@ async function cancelSession() {
   if (!session) return { ok: false, reason: "no_active_session" };
   broadcastCommand({ type: "stop_session" }, session.tab_id);
   session = null;
+  setRecordingBadge(false);
   await persistSessionMeta();
   return { ok: true };
 }
@@ -1656,6 +1712,19 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       }
       safeRespond(sendResponse, { ok: true, settings });
       return false;
+
+    case "popup:setPreset": {
+      const name = String(msg.preset || "").toLowerCase();
+      const preset = CAPTURE_PRESETS[name];
+      if (!preset) {
+        safeRespond(sendResponse, { ok: false, reason: "unknown_preset" });
+        return false;
+      }
+      settings = { ...settings, ...preset };
+      chrome.storage.local.set({ settings });
+      safeRespond(sendResponse, { ok: true, settings });
+      return false;
+    }
 
     case "popup:start": {
       (async () => {

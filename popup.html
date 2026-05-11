@@ -9,7 +9,7 @@
     <main id="app">
       <header>
         <h1>WebReconPack</h1>
-        <span class="version" id="version">v0.1.2</span>
+        <span class="version" id="version">v0.1.1</span>
       </header>
 
       <section id="firstRunWarning" class="warning hidden">
@@ -34,6 +34,10 @@
         <div class="row">
           <span class="label">Tab</span>
           <span class="value" id="tab">—</span>
+        </div>
+        <div class="row" id="durationRow" hidden>
+          <span class="label">Duration</span>
+          <span class="value mono" id="duration">0s</span>
         </div>
         <div class="row">
           <span class="label">Session</span>
@@ -84,6 +88,15 @@
       </footer>
 
       <section id="settingsPanel" class="hidden">
+        <div class="setting presetRow">
+          <span>Capture preset</span>
+          <select id="presetSelect">
+            <option value="light">Light — metadata only</option>
+            <option value="standard">Standard — bodies + storage</option>
+            <option value="deep">Deep — large caps + IDB</option>
+          </select>
+        </div>
+        <p class="muted presetHint" id="presetHint">Standard is the spec default.</p>
         <label class="setting">
           <input type="checkbox" id="setRedact" /> Redact secrets in headers/bodies/cookies
         </label>

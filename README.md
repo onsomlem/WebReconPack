@@ -11,7 +11,15 @@ for the full v0.1 spec.
 > `chrome.downloads.download()` to save the ZIP locally and has no network
 > egress of its own.
 
-## Status — v0.1.2 (full build)
+## Status — v0.1.1 (shipped)
+
+v0.1.0 shipped after passing the spec §31 Sheets acceptance test (see
+**Validation** below). v0.1.1 adds operator-experience polish:
+
+- **Toolbar `REC` badge** so you can't forget a session is running.
+- **Live duration timer** in the popup.
+- **Capture-preset selector** — Light / Standard / Deep, per spec §10.
+- README **Validation** + **Reading the bundle** sections.
 
 All v0.1 phases shipped:
 
@@ -33,6 +41,96 @@ All v0.1 phases shipped:
 Deferred to v0.2 per spec §30 (HAR, multi-tab, IDB record dumping, source maps,
 worker internal traffic, Postman/OpenAPI export, recipe generation, full CSP via
 `webRequest`).
+
+## Validation
+
+WebReconPack v0.1.0 was tested on Google Sheets for a 125-second session.
+Bundle preserved under
+[`golden-tests/sheets-125s-v0.1.0/`](golden-tests/sheets-125s-v0.1.0/).
+
+Results:
+
+- **768 KB ZIP** (130× under the spec's 100 MB acceptance cap)
+- **353 network records** (18 fetch + 335 XHR — first XHR-volume validation)
+- **6 frames snapshotted** including cross-origin (`accounts.google.com`,
+  `contacts.google.com`, `ogs.google.com`)
+- `_docs_flag_initialData` (85 KB) and `WIZ_global_data` (19 KB) bootstrap
+  globals captured uncut
+- **XSSI prefix `)]}'`** detected on 58 responses (high confidence)
+- **Google WIZ batchexecute** detected on 58 requests (high confidence)
+- **form-urlencoded RPC** detected on 56 requests
+- **protobuf-like binary responses** detected on 8 responses
+- 33 header values + 43 cookie values redacted
+- Body cap not hit (1.78 MB of bodies captured against a 50 MB budget)
+- **No page breakage observed** (Sheets remained fully interactive,
+  another extension running on the same page was not interfered with)
+
+That's the canonical complex-SPA acceptance test from spec §31. The
+extension produced the artifact it was designed to produce.
+
+## Reading the bundle
+
+Inspect the ZIP contents in this order:
+
+1. **`summary.md`** — start here. Top endpoints (clustered + normalized),
+   detected patterns (GraphQL/RPC/XSSI/etc.), initiator classification,
+   redaction report, suggested next steps.
+2. **`network.jsonl`** — the meat. One JSON record per request. Headers,
+   bodies (capped + decoded as JSON when possible), timing, initiator
+   stack, frame URL. Filter with [jq](https://jqlang.github.io/jq/):
+   ```sh
+   jq -c 'select(.method=="POST")' network.jsonl
+   jq -c 'select(.url|test("graphql"))' network.jsonl
+   jq -c 'select(.responseBody.decoded != null) | {url, decoded: .responseBody.decoded}' network.jsonl | head -3
+   ```
+3. **`timeline.jsonl`** — unified time-ordered event stream. Correlate
+   user clicks, navigation events, and network calls:
+   ```sh
+   jq -c '{t,kind,summary}' timeline.jsonl | head -30
+   ```
+4. **`globals.json`** — bootstrap state objects (`__INITIAL_STATE__`,
+   `__NEXT_DATA__`, `__APOLLO_STATE__`, etc.) where present. This is
+   where SPAs hide their server-rendered initial state.
+5. **`storage.json`** — localStorage / sessionStorage / cookies (redacted)
+   per frame, plus IndexedDB metadata and Cache Storage URLs.
+6. **`runtime.json`** — userAgent, languages, CSP meta tags, Trusted
+   Types presence, service worker registrations, permission states,
+   feature-detection (WebRTC, WebAuthn, FileSystemAccess, etc.).
+7. **`navigation.jsonl`** — `pushState` / `replaceState` / `popstate` /
+   `hashchange` / `beforeunload` / `pagehide` / `visibilitychange`. SPA
+   route trace.
+8. **`user-events.jsonl`** — clicks, focus/blur, scrolls (throttled),
+   keydowns (no values by default), changes. Each has a `target`
+   descriptor with selector, role, aria-label, text snippet.
+9. **`scripts.jsonl`** — every dynamic `<script>` / `<link>` / `<style>`
+   added during recording. Useful for understanding lazy-loading.
+10. **`beacons.jsonl`** — `navigator.sendBeacon` calls (telemetry).
+11. **`websockets.jsonl` / `sse.jsonl`** — realtime channels with
+    open/close + frame data.
+12. **`console.jsonl`** — `console.*` + `window.error` +
+    `unhandledrejection`. Stack traces with our wrapper frames already
+    filtered.
+13. **`dom.html`** — top-frame `documentElement.outerHTML` at stop time.
+    Open in a browser; it won't render fully without its asset URLs but
+    the structure is intact.
+14. **`dom-iframes/`** — same-origin iframe HTML where accessible.
+15. **`manifest.json`** — bundle metadata (counts, settings used, limits,
+    redaction stats, frames seen vs snapshotted, warnings).
+
+### Quick recipes
+
+```sh
+# Top 10 unique POST endpoints (normalized)
+jq -r 'select(.method=="POST") | .url_parts.pathname' network.jsonl \
+  | sed -E 's/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/{uuid}/g' \
+  | sort | uniq -c | sort -rn | head -10
+
+# All XSSI-prefixed responses
+jq -c 'select(.responseBody.inline != null and (.responseBody.inline | startswith(")]}'")))' network.jsonl
+
+# Map clicks to subsequent network calls (within 1 second)
+jq -c 'select(.kind=="user_click" or .kind=="request_start") | {t,kind,summary}' timeline.jsonl
+```
 
 ## Install (unpacked)
 

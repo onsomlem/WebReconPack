@@ -8,6 +8,8 @@
   const els = {
     state: $("state"),
     tab: $("tab"),
+    durationRow: $("durationRow"),
+    duration: $("duration"),
     sessionId: $("sessionId"),
     firstRunWarning: $("firstRunWarning"),
     ackBtn: $("ackBtn"),
@@ -29,6 +31,8 @@
     errorPanel: $("errorPanel"),
     errorMsg: $("errorMsg"),
     clearErrorBtn: $("clearErrorBtn"),
+    presetSelect: $("presetSelect"),
+    presetHint: $("presetHint"),
     setRedact: $("setRedact"),
     setReqBodies: $("setReqBodies"),
     setRespBodies: $("setRespBodies"),
@@ -96,6 +100,27 @@
     els.setInputValues.checked = !!s.capture_input_values;
     els.setClipboardValues.checked = !!s.capture_clipboard_values;
     els.setCacheUrls.checked = !!s.capture_cache_storage_urls;
+    if (s.capture_preset && els.presetSelect.value !== s.capture_preset) {
+      els.presetSelect.value = s.capture_preset;
+    }
+    const hints = {
+      light: "Light: metadata only — no request/response bodies, smallest caps.",
+      standard: "Standard: bodies + storage values within 256 KB / 50 MB caps.",
+      deep: "Deep: 1 MB inline / 200 MB total caps, IDB records, larger globals.",
+    };
+    els.presetHint.textContent = hints[s.capture_preset] || "Standard is the spec default.";
+  }
+
+  function formatDuration(ms) {
+    if (!Number.isFinite(ms) || ms < 0) return "0s";
+    const s = Math.floor(ms / 1000);
+    if (s < 60) return s + "s";
+    const m = Math.floor(s / 60);
+    const rs = s % 60;
+    if (m < 60) return `${m}m ${String(rs).padStart(2, "0")}s`;
+    const h = Math.floor(m / 60);
+    const rm = m % 60;
+    return `${h}h ${String(rm).padStart(2, "0")}m ${String(rs).padStart(2, "0")}s`;
   }
 
   function applyState(snapshot) {
@@ -114,8 +139,17 @@
 
     if (snapshot.session) {
       renderCounts(snapshot.session.counts, snapshot.session.body_cap_hit);
+      // Live duration timer — shown while recording or finalizing.
+      const startedMs = Date.parse(snapshot.session.started_at);
+      if (Number.isFinite(startedMs) && (state === "recording" || state === "finalizing")) {
+        els.durationRow.hidden = false;
+        els.duration.textContent = formatDuration(Date.now() - startedMs);
+      } else {
+        els.durationRow.hidden = true;
+      }
     } else {
       renderCounts(null, false);
+      els.durationRow.hidden = true;
     }
 
     if (snapshot.firstRunAcknowledged) {
@@ -240,6 +274,11 @@
   bindSettingToggle(els.setInputValues, "capture_input_values");
   bindSettingToggle(els.setClipboardValues, "capture_clipboard_values");
   bindSettingToggle(els.setCacheUrls, "capture_cache_storage_urls");
+
+  els.presetSelect.addEventListener("change", async () => {
+    await send("popup:setPreset", { preset: els.presetSelect.value });
+    refresh();
+  });
 
   // ---- Lifecycle -------------------------------------------------------
   document.addEventListener("DOMContentLoaded", () => {

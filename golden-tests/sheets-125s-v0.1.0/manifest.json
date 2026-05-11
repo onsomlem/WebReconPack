@@ -1,0 +1,82 @@
+{
+  "format_version": "0.1",
+  "tool": "WebReconPack",
+  "tool_version": "0.1.2",
+  "session_id": "947f9bca-688c-443d-ad4e-cc988b9544c9",
+  "started_at": "2026-05-10T23:50:47.811Z",
+  "ended_at": "2026-05-10T23:52:53.105Z",
+  "duration_ms": 125294,
+  "start_url": "https://docs.google.com/spreadsheets/d/1mdlw002xb10ziWqW4GEziTr-DKjbGYTsADZXS3zO3pE/edit?gid=166108131#gid=166108131",
+  "end_url": "https://docs.google.com/spreadsheets/d/1mdlw002xb10ziWqW4GEziTr-DKjbGYTsADZXS3zO3pE/edit?gid=1636129645#gid=1636129645",
+  "settings": {
+    "capture_preset": "standard",
+    "redact_secrets": true,
+    "capture_request_bodies": true,
+    "capture_response_bodies": true,
+    "capture_binary_bodies": false,
+    "capture_idb_records": false,
+    "capture_user_event_metadata": true,
+    "capture_input_values": false,
+    "capture_clipboard_values": false,
+    "capture_file_contents": false,
+    "capture_cache_storage_urls": true,
+    "max_inline_body_bytes": 262144,
+    "max_sidecar_body_bytes": 5242880,
+    "max_total_body_bytes": 52428800,
+    "max_console_arg_bytes": 32768,
+    "max_storage_value_bytes": 102400,
+    "max_global_blob_bytes": 262144,
+    "dom_mutation_summary_interval_ms": 1000,
+    "stop_grace_period_ms": 500
+  },
+  "counts": {
+    "network": 353,
+    "fetch": 18,
+    "xhr": 335,
+    "beacon": 3,
+    "form": 0,
+    "navigation": 28,
+    "user_event": 72,
+    "script": 107,
+    "download": 131,
+    "clipboard": 0,
+    "file_input": 0,
+    "worker": 1,
+    "ws_open": 0,
+    "ws_frame": 0,
+    "sse_open": 0,
+    "sse_event": 0,
+    "console": 2,
+    "error": 4,
+    "mutation_summary": 38,
+    "timeline": 1058
+  },
+  "limits": {
+    "max_inline_body_bytes": 262144,
+    "max_total_body_bytes": 52428800
+  },
+  "body_cap_hit": false,
+  "redaction": {
+    "headers": 33,
+    "cookies": 43,
+    "bodyFields": 0
+  },
+  "warnings": [],
+  "frames_seen": [
+    "https://docs.google.com/spreadsheets/d/1mdlw002xb10ziWqW4GEziTr-DKjbGYTsADZXS3zO3pE/edit?gid=168935039#gid=168935039",
+    "https://docs.google.com/drivesharing/clientmodel?id=1mdlw002xb10ziWqW4GEziTr-DKjbGYTsADZXS3zO3pE&foreignService=ritz&authuser=0&origin=https%3A%2F%2Fdocs.google.com",
+    "https://docs.google.com/_/og/bscframe",
+    "https://docs.google.com/offline/iframeapi?ouid=u30c5e21078409397&sa=6#csid=COvo9IT1r5QDFUfrKAUd5zIRHw&cd=1",
+    "https://contacts.google.com/widget/hovercard/v/2?origin=https%3A%2F%2Fdocs.google.com&usegapi=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.gSqfLc8WnvU.O%2Fd%3D1%2Frs%3DAHpOoo_cXXGArE2dtw6vkGR2NQ_1f5L3AQ%2Fm%3D__features__#id=I__HC_94253229&_gfid=I__HC_94253229&parent=https%3A%2F%2Fdocs.google.com&pfname=&rpctoken=21982251",
+    "https://accounts.google.com/RotateCookiesPage?og_pid=283&rot=3&origin=https%3A%2F%2Fdocs.google.com&exp_id=0",
+    "https://ogs.google.com/u/0/widget/account?swe=1&baea=1&amb=1&pppea=1&dpi=72175901&origin=https%3A%2F%2Fdocs.google.com&cn=account&pid=283&spid=283"
+  ],
+  "frames_snapshotted": [
+    "https://accounts.google.com/RotateCookiesPage?og_pid=283&rot=3&origin=https%3A%2F%2Fdocs.google.com&exp_id=0",
+    "https://docs.google.com/spreadsheets/d/1mdlw002xb10ziWqW4GEziTr-DKjbGYTsADZXS3zO3pE/edit?gid=1636129645#gid=1636129645",
+    "https://docs.google.com/_/og/bscframe",
+    "https://docs.google.com/offline/iframeapi?ouid=u30c5e21078409397&sa=6#csid=COvo9IT1r5QDFUfrKAUd5zIRHw&cd=1",
+    "https://contacts.google.com/widget/hovercard/v/2?origin=https%3A%2F%2Fdocs.google.com&usegapi=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.gSqfLc8WnvU.O%2Fd%3D1%2Frs%3DAHpOoo_cXXGArE2dtw6vkGR2NQ_1f5L3AQ%2Fm%3D__features__#id=I__HC_94253229&_gfid=I__HC_94253229&parent=https%3A%2F%2Fdocs.google.com&pfname=&rpctoken=21982251",
+    "https://ogs.google.com/u/0/widget/account?swe=1&baea=1&amb=1&pppea=1&dpi=72175901&origin=https%3A%2F%2Fdocs.google.com&cn=account&pid=283&spid=283"
+  ]
+}
