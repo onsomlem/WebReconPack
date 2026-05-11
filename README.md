@@ -11,15 +11,18 @@ for the full v0.1 spec.
 > `chrome.downloads.download()` to save the ZIP locally and has no network
 > egress of its own.
 
-## Status — v0.1.2 (shipped, public-safe)
+## Status — v0.2.0 (analyzer shipped)
 
 - **v0.1.0** — first working release; passed spec §31 Sheets acceptance.
 - **v0.1.1** — operator polish: toolbar `REC` badge, live duration timer,
-  capture-preset selector (Light / Standard / Deep), README validation
-  section.
-- **v0.1.2** — public hygiene: untrack local agent settings; second
-  golden test (GitHub, 120s, form_submit + multi-frame validated); manifest
-  version bumped to match git tag.
+  capture-preset selector (Light / Standard / Deep).
+- **v0.1.2** — public hygiene; second golden test (GitHub, 120s, form_submit
+  + multi-frame validated).
+- **v0.2.0** — **[`webrecon-analyze`](analyzer/)** companion CLI. Single-file
+  Python, stdlib only. Turns a recon ZIP into structured insight: auth
+  surface, endpoint clustering, classification, extraction strategy with
+  jq + curl recipes, parser warnings. Validated by 19 acceptance checks
+  against both golden bundles.
 
 All v0.1 phases shipped:
 
@@ -90,6 +93,37 @@ future versions.
 Combined coverage: XHR-heavy SPAs, fetch-heavy SPAs, form submits, multi-frame
 sessions, cross-origin frames, Trusted Types environments, and high-volume
 dynamic script injection — all without breaking the host page.
+
+## Analyzing a bundle (v0.2.0+)
+
+For a structured operator-focused report, use the companion analyzer:
+
+```sh
+python3 analyzer/webrecon_analyze.py recon-yourdomain-XXX.zip
+# writes <bundle>.report.md  (human)
+# writes <bundle>.report.json (machine)
+```
+
+What you get on top of the recorder's `summary.md`:
+
+- **Auth surface** — every auth-flagged header, auth cookie, CSRF form
+  field, bearer-token presence, auth-flagged query params, aggregated
+  across the session.
+- **Endpoint clusters by classification** — `data_fetch` / `data_write` /
+  `rpc` / `auth` / `telemetry` / `asset` / `unknown`, with required vs
+  optional query keys, status distribution, and request/response shape.
+- **Likely data endpoints + extraction strategy** — per-cluster notes on
+  pagination, auth, rate limits, base64 fields, plus a runnable `jq`
+  recipe and `curl` skeleton.
+- **Parser warnings** — XSSI prefix, base64 fields, binary/protobuf
+  responses, NDJSON streams, WIZ batchexecute. Each with an explicit
+  *action* the operator should take.
+- **Bootstrap globals inventory** — `__NEXT_DATA__`, `_docs_flag_initialData`,
+  `WIZ_global_data`, `__APOLLO_STATE__`, etc. with size + structural
+  shape.
+
+See [`analyzer/README.md`](analyzer/README.md) for full details and an
+example output.
 
 ## Reading the bundle
 
